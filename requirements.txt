@@ -1,0 +1,21 @@
+# LangChain and OpenAI integration
+langchain>=0.0.148
+openai>=0.27.0
+
+# Vector store; using FAISS for similarity search
+faiss-cpu>=1.7.2
+
+# PDF loading and parsing (PyMuPDF loader)
+PyMuPDF>=1.22.5
+
+# For text splitting utilities (if a separate package is needed)
+langchain-text-splitters>=0.0.1
+    
+# Streamlit for interactive UI
+streamlit>=1.20.0
+
+# Optional: pdfplumber for alternative PDF parsing
+pdfplumber>=0.6.0
+
+# Pandas for data processing / cleanup
+pandas>=1.5.0
