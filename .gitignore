@@ -1,3 +1,4 @@
 .env
 # In your .gitignore
 faiss_index/
+venv310/
