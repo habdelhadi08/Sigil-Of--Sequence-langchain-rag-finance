@@ -5,42 +5,57 @@ from langchain_community.document_loaders import PyMuPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.llms.huggingface_pipeline import HuggingFacePipeline
-from transformers import pipeline, AutoTokenizer, AutoModelForSeq2SeqLM
+from transformers import pipeline
 
-# App title
-st.title("Welcome to my Text Generator App!")
+st.set_page_config(page_title="File Analyzer", layout="wide")
+st.title("📄 Welcome to My File Analyzer App")
+
+# Caching heavy steps
+@st.cache_resource
+def process_pdf(file_path):
+    loader = PyMuPDFLoader(file_path)
+    documents = loader.load()
+    splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+    return splitter.split_documents(documents)
+
+@st.cache_resource
+def build_vectorstore(_docs):
+    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/paraphrase-MiniLM-L3-v2")
+    return FAISS.from_documents(_docs, embeddings)
+
+@st.cache_resource
+def load_llm():
+    flan_pipe = pipeline("text2text-generation", model="google/flan-t5-base")
+    return HuggingFacePipeline(pipeline=flan_pipe)
 
 # 📄 Upload 10-Q PDF
-st.header("📄 Upload your PDF File")
+st.header("Upload your PDF File")
 uploaded_file = st.file_uploader("Upload your PDF file below", type="pdf")
 
 if uploaded_file:
+    # Save file locally
     with open("temp.pdf", "wb") as f:
         f.write(uploaded_file.read())
 
-    # 🧾 Load & split PDF
-    loader = PyMuPDFLoader("temp.pdf")
-    documents = loader.load()
-    splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-    docs = splitter.split_documents(documents)
+    # Step 1: Process and Split
+    with st.spinner("📂 Processing PDF..."):
+        docs = process_pdf("temp.pdf")
 
-    # Generate embeddings
-    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/paraphrase-MiniLM-L3-v2")
+    # Step 2: Embedding & Vectorstore
+    with st.spinner("🔍 Creating FAISS Index..."):
+        vectorstore = build_vectorstore(docs)
 
-    vectorstore = FAISS.from_documents(docs, embeddings)
+    # Step 3: Load the LLM
+    with st.spinner("🤖 Loading Q&A Model..."):
+        llm = load_llm()
 
-    # Load local Q&A model
-    model_name = "google/flan-t5-base"
-    flan_pipe = pipeline("text2text-generation", model=model_name)
-    llm = HuggingFacePipeline(pipeline=flan_pipe)
-
-    # Retrieval-based QA chain
+    # Step 4: Retrieval Chain
     qa_chain = RetrievalQA.from_chain_type(llm=llm, retriever=vectorstore.as_retriever())
 
-    # Ask user query
-    query = st.text_input("Ask something like: 'What are the financial highlights?'")
+    # Step 5: User query input
+    query = st.text_input("🔎 Ask your question:", placeholder="e.g. What are the financial highlights?")
     if query:
-        response = qa_chain.run(query)
+        with st.spinner("💬 Generating answer..."):
+            response = qa_chain.run(query)
         st.subheader("📑 Answer")
-        st.write(response[:1500]) 
-
+        st.write(response[:1500])
