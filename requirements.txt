@@ -23,7 +23,7 @@ tqdm==4.66.1
 
 
 # Vector store
-#faiss-cpu==1.7.3 I comment this out but when deploying my app, I get error
+# faiss-cpu==1.7.3  # commented out, only used in notebook
 chromadb==0.4.24
 
 
