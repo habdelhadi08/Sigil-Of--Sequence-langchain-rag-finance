@@ -1,16 +1,13 @@
 # Core frameworks
 langchain==0.3.26
 langchain-community==0.3.27
-streamlit==1.14.0
+streamlit==1.25.0  # newer version, more stable with transformers
 
 # Embeddings & models
 sentence-transformers==2.2.2
 transformers==4.37.2
 torch==2.2.2
 huggingface-hub==0.20.3
-
-# Vector store
-#faiss-cpu==1.7.3 I comment this out but when deploying my app, I get error
 
 # PDF processing
 pymupdf==1.23.9
@@ -23,3 +20,10 @@ altair==4.2.2
 # Utils
 python-dotenv==1.0.0
 tqdm==4.66.1
+
+
+# Vector store
+#faiss-cpu==1.7.3 I comment this out but when deploying my app, I get error
+chromadb==0.4.24
+
+
