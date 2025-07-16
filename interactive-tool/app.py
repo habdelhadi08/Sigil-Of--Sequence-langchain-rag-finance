@@ -42,7 +42,7 @@ if uploaded_file:
         docs = process_pdf("temp.pdf")
 
     # Step 2: Embedding & Vectorstore
-    with st.spinner("🔍 Creating FAISS Index..."):
+    with st.spinner("🔍 Creating Chroma Vectorstore..."):
         vectorstore = build_vectorstore(docs)
 
     # Step 3: Load the LLM
