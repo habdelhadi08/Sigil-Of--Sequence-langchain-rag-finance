@@ -10,7 +10,7 @@ torch==2.2.2
 huggingface-hub==0.20.3
 
 # PDF processing
-pymupdf==1.23.9
+pymupdf==1.26.3
 PyPDF2==3.0.1
 
 # Data & visualization
