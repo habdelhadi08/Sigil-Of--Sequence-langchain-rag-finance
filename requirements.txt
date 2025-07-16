@@ -10,7 +10,7 @@ torch==2.2.2
 huggingface-hub==0.20.3
 
 # Vector store
-faiss-cpu==1.7.3
+#faiss-cpu==1.7.3 I comment this out but when deploying my app, I get error
 
 # PDF processing
 pymupdf==1.23.9
