@@ -1,6 +1,6 @@
 import streamlit as st
 from langchain.chains import RetrievalQA
-from langchain_community.vectorstores import FAISS
+from langchain.vectorstores import Chroma
 from langchain_community.document_loaders import PyMuPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
@@ -21,7 +21,7 @@ def process_pdf(file_path):
 @st.cache_resource
 def build_vectorstore(_docs):
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/paraphrase-MiniLM-L3-v2")
-    return FAISS.from_documents(_docs, embeddings)
+    return Chroma.from_documents(_docs, embeddings)
 
 @st.cache_resource
 def load_llm():
