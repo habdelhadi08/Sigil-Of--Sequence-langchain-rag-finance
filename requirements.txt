@@ -27,4 +27,3 @@ tqdm==4.66.1
 chromadb==0.4.24
 
 
-https://habdelhadi08-sigil-of--sequence-lang-interactive-toolapp-eawe2q.streamlit.app/
