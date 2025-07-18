@@ -1,8 +1,3 @@
-import sys
-import pysqlite3
-sys.modules["sqlite3"] = pysqlite3
-
-
 import fitz
 import streamlit as st
 from langchain.chains import RetrievalQA
