@@ -6,7 +6,7 @@ streamlit==1.25.0  # newer version, more stable with transformers
 # Embeddings & models
 sentence-transformers==2.2.2
 transformers==4.37.2
-torch==2.2.2
+torch
 huggingface-hub==0.20.3
 
 # PDF processing
@@ -24,6 +24,6 @@ tqdm==4.66.1
 
 # Vector store
 # faiss-cpu==1.7.3  # commented out, only used in notebook
-chromadb==0.4.24
+chromadb>=0.4.24
 
-
+https://habdelhadi08-sigil-of--sequence-lang-interactive-toolapp-eawe2q.streamlit.app/
