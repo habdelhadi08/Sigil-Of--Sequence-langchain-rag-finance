@@ -91,7 +91,9 @@ Please ensure your code adheres to the existing style and includes tests where a
 ## 📬 Contact
 
 Author: Heba Abdelhadi
+
 Email: habdelhadi08@gmail.com
+
 Role: Data Scientist
 
 Thank you for using 10Q-InsightEngine!
