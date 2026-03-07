@@ -12,9 +12,10 @@ huggingface-hub==0.20.3
 # PDF processing
 pymupdf==1.26.3
 PyPDF2==3.0.1
+pypdf
 
 # Data & visualization
-pandas==1.5.3
+pandas==2.3.3
 altair==4.2.2
 
 # Utils
@@ -26,4 +27,3 @@ tqdm==4.66.1
 # faiss-cpu==1.7.3  # commented out, only used in notebook
 chromadb>=0.4.24
 
-https://habdelhadi08-sigil-of--sequence-lang-interactive-toolapp-eawe2q.streamlit.app/
