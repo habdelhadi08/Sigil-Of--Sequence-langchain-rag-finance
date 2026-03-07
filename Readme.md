@@ -94,7 +94,7 @@ Author: Heba Abdelhadi
 
 Email: habdelhadi08@gmail.com
 
-Role: Data Scientist
+Role: Data Scientist/AI Engineer
 
 Thank you for using 10Q-InsightEngine!
 
