@@ -19,8 +19,8 @@ st.title("📄 Welcome to My File Analyzer App")
 # Sidebar: Model & Splitter Settings
 # -----------------------------
 LLM_OPTIONS = {
-    "Flan-T5 Small": "google/flan-t5-small",
-    "Flan-T5 Base": "google/flan-t5-base"
+    "Flan-T5 Small": "google/flan-t5-base",
+    "Flan-T5 Base": "google/flan-t5-large"
 }
 
 # Choice for single or dual model comparison
