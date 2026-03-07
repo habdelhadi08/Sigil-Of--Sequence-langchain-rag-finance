@@ -22,8 +22,17 @@ LLM_OPTIONS = {
     "Flan-T5 Small": "google/flan-t5-small",
     "Flan-T5 Base": "google/flan-t5-base"
 }
-model_choice = st.sidebar.selectbox("Choose a language model", list(LLM_OPTIONS.keys()))
 
+# Choice for single or dual model comparison
+mode = st.sidebar.radio("Mode", ["Single Model", "Compare Two Models"])
+
+if mode == "Single Model":
+    model_choice = st.sidebar.selectbox("Choose a language model", list(LLM_OPTIONS.keys()))
+else:
+    model_choice_1 = st.sidebar.selectbox("Model 1", list(LLM_OPTIONS.keys()), index=0)
+    model_choice_2 = st.sidebar.selectbox("Model 2", list(LLM_OPTIONS.keys()), index=1)
+
+# Text splitter settings
 chunk_size = st.sidebar.slider("Chunk Size", min_value=500, max_value=2000, value=1000, step=100)
 chunk_overlap = st.sidebar.slider("Chunk Overlap", min_value=50, max_value=500, value=200, step=50)
 
@@ -32,20 +41,15 @@ chunk_overlap = st.sidebar.slider("Chunk Overlap", min_value=50, max_value=500, 
 # -----------------------------
 @st.cache_resource
 def load_llm(model_name):
-    st.info(f"Using model: `{model_name}`")
     pipe = pipeline("text2text-generation", model=model_name, max_length=512)
     return HuggingFacePipeline(pipeline=pipe)
 
 @st.cache_resource
 def process_pdf(file_path, chunk_size, chunk_overlap):
-    try:
-        loader = PyMuPDFLoader(file_path)
-        documents = loader.load()
-        splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
-        return splitter.split_documents(documents)
-    except Exception as e:
-        st.error(f"Error processing PDF: {e}")
-        return []
+    loader = PyMuPDFLoader(file_path)
+    documents = loader.load()
+    splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
+    return splitter.split_documents(documents)
 
 @st.cache_resource
 def build_vectorstore(docs):
@@ -72,10 +76,17 @@ if uploaded_file:
         with st.spinner("🔍 Building Chroma Vectorstore..."):
             vectorstore = build_vectorstore(docs)
 
-        with st.spinner("🤖 Loading your selected model..."):
+        # -----------------------------
+        # Load LLM(s)
+        # -----------------------------
+        if mode == "Single Model":
             llm = load_llm(LLM_OPTIONS[model_choice])
-
-        qa_chain = RetrievalQA.from_chain_type(llm=llm, retriever=vectorstore.as_retriever())
+            qa_chain = RetrievalQA.from_chain_type(llm=llm, retriever=vectorstore.as_retriever())
+        else:
+            llm1 = load_llm(LLM_OPTIONS[model_choice_1])
+            llm2 = load_llm(LLM_OPTIONS[model_choice_2])
+            qa_chain_1 = RetrievalQA.from_chain_type(llm=llm1, retriever=vectorstore.as_retriever())
+            qa_chain_2 = RetrievalQA.from_chain_type(llm=llm2, retriever=vectorstore.as_retriever())
 
         # -----------------------------
         # Step 2: Ask Questions
@@ -85,12 +96,20 @@ if uploaded_file:
 
         if user_question:
             with st.spinner("💬 Generating response..."):
-                try:
+                if mode == "Single Model":
                     response = qa_chain.run(user_question)
                     st.subheader("📑 Answer")
                     st.text_area("Answer", value=response, height=300)
-                except Exception as e:
-                    st.error(f"Error generating answer: {e}")
+                else:
+                    response1 = qa_chain_1.run(user_question)
+                    response2 = qa_chain_2.run(user_question)
+                    st.subheader(f"📑 Answers Comparison")
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.markdown(f"**{model_choice_1}**")
+                        st.text_area("Answer", value=response1, height=300)
+                    with col2:
+                        st.markdown(f"**{model_choice_2}**")
+                        st.text_area("Answer", value=response2, height=300)
     else:
         st.warning("No documents were extracted from the PDF.")
-
