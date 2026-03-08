@@ -19,11 +19,10 @@ st.title("📄 Welcome to My File Analyzer App")
 # Sidebar: Model & Splitter Settings
 # -----------------------------
 LLM_OPTIONS = {
-    "Flan-T5 Small": "google/flan-t5-base",
-    "Flan-T5 Base": "google/flan-t5-large"
+    "Flan-T5 base": "google/flan-t5-base",
+    "Flan-T5 Large": "google/flan-t5-large"
 }
 
-# Choice for single or dual model comparison
 mode = st.sidebar.radio("Mode", ["Single Model", "Compare Two Models"])
 
 if mode == "Single Model":
@@ -33,8 +32,8 @@ else:
     model_choice_2 = st.sidebar.selectbox("Model 2", list(LLM_OPTIONS.keys()), index=1)
 
 # Text splitter settings
-chunk_size = st.sidebar.slider("Chunk Size", min_value=500, max_value=2000, value=1000, step=100)
-chunk_overlap = st.sidebar.slider("Chunk Overlap", min_value=50, max_value=500, value=200, step=50)
+chunk_size = st.sidebar.slider("Chunk Size", 500, 2000, 1000, 100)
+chunk_overlap = st.sidebar.slider("Chunk Overlap", 50, 500, 200, 50)
 
 # -----------------------------
 # Functions
@@ -52,9 +51,9 @@ def process_pdf(file_path, chunk_size, chunk_overlap):
     return splitter.split_documents(documents)
 
 @st.cache_resource
-def build_vectorstore(docs):
+def build_vectorstore(_docs):  # Note the leading underscore to avoid hashing
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/paraphrase-MiniLM-L3-v2")
-    return Chroma.from_documents(docs, embeddings)
+    return Chroma.from_documents(_docs, embeddings)
 
 # -----------------------------
 # Step 1: Upload PDF
@@ -103,7 +102,7 @@ if uploaded_file:
                 else:
                     response1 = qa_chain_1.run(user_question)
                     response2 = qa_chain_2.run(user_question)
-                    st.subheader(f"📑 Answers Comparison")
+                    st.subheader("📑 Answers Comparison")
                     col1, col2 = st.columns(2)
                     with col1:
                         st.markdown(f"**{model_choice_1}**")
